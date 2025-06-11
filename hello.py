@@ -1,6 +1,6 @@
 # hello.py
 def main():
-    print("Hello from demo-1! just remove branch mand restart, ez.")
+    print("Hello word.")
 
 
 if __name__ == "__main__":
