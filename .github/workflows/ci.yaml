@@ -1,0 +1,27 @@
+ name: CI Pipeline
+
+ on:
+  pull_request:
+     branches:
+     - main
+
+ jobs:
+  build:  # 1. First: ensure code compiles/runs
+     runs-on: ubuntu-latest
+     
+     steps: # Note: Steps run chronologically!
+     - name: Checkout code
+       uses: actions/checkout@v4  # Download repo code
+     
+     - name: Set up Python
+       uses: actions/setup-python@v5 # Each job runs on a fresh virtual machine
+       with:
+         python-version: '3.10' 
+     
+     - name: Install dependencies
+       run: | # The | is a YAML multiline string operator that lets you write multiple commands across several lines.
+         pip install uv
+         uv sync  # Install all dependencies from pyproject.toml
+     
+     - name: Run Python script
+       run: uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8080
