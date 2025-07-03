@@ -29,9 +29,13 @@ model = load_model()
 
 
 def preprocess_features(features: PenguinFeatures):
-    input_dict = features.model_dump()
-    X_input = pd.DataFrame([input_dict])
-    X_input = pd.get_dummies(X_input, columns=["sex", "island"])
+    """ 
+    Note: This must match the preprocessing done during training.
+    The model expects the same feature set as it was trained on.
+    """
+    input_dict = features.model_dump()  # This returns a dictionary of the model's fields
+    X_input = pd.DataFrame([input_dict]) 
+    X_input = pd.get_dummies(X_input, columns=["sex", "island"]) # Ensure the same 
     expected_cols = [
         "bill_length_mm",
         "bill_depth_mm",
