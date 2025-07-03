@@ -3,6 +3,7 @@ from app.main import app
 import pytest
 
 
+# This fixture returns a dictionary of features that can be used in all tests.
 @pytest.fixture
 def features():
     return {
