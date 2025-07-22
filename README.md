@@ -57,7 +57,7 @@ uv sync
 uv run python train.py                      # trains & saves artifacts to app/data/
 uv run uvicorn app.main:app --reload        # http://127.0.0.1:8000
 ```
-### B) With `piv/venv`
+### B) With `pip/venv`
 ```bash
 python -m venv .venv
 source .venv/bin/activate    # Windows: .venv\Scripts\activate
