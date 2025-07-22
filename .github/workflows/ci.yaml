@@ -1,57 +1,44 @@
 name: CI Pipeline
-
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: ${{ runner.os }}-uv-${{ hashFiles('pyproject.toml', 'uv.lock') }}
-      
-      - name: Install dependencies
-        run: |
-          pip install uv
-          uv sync
-          uv pip list
-      
-      - name: Check model file
-        run: test -f app/data/model.json || (echo "Model file missing" && exit 1)
-      
+      - uses: actions/checkout@v4
+
+      - name: Build container
+        run: docker compose build
+
+      - name: Train model
+        run: docker compose run --rm api python train.py
+
       - name: Run tests
-        run: uv run pytest --cov=app --cov-report=xml
-      
-      - name: Start server in background
-        run: |
-          uv run uvicorn app.main:app --host 127.0.0.1 --port 8080 &> server.log &
-          echo $! > server.pid
-      
-      - name: Wait for server to start
+        run: docker compose run --rm api pytest -q
+
+      - name: Start API
+        run: docker compose up -d api
+
+      - name: Wait for API
         run: |
           for i in {1..30}; do
-            if curl --fail http://127.0.0.1:8080/health; then
-              break
-            fi
+            if curl --fail http://127.0.0.1:8080/health; then exit 0; fi
             sleep 1
           done
-      
-      - name: Health check
-        run: curl --fail http://127.0.0.1:8080/health
-      
-      - name: Stop server
-        run: kill $(cat server.pid) || true
+          echo "API failed to start" && exit 1
+
+      - name: Prediction smoke test
+        run: |
+          curl -f -X POST http://127.0.0.1:8080/predict \
+            -H "Content-Type: application/json" \
+            -d '{"bill_length_mm":50,"bill_depth_mm":15,"flipper_length_mm":210,"body_mass_g":4500,"year":2008,"sex":"male","island":"Biscoe"}'
+
+      - name: Logs
+        run: docker compose logs api --tail=100
+
+      - name: Tear down
+        run: docker compose down --remove-orphans

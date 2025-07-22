@@ -1,0 +1,42 @@
+{
+  "numeric_features": [
+    "bill_length_mm",
+    "bill_depth_mm",
+    "flipper_length_mm",
+    "body_mass_g",
+    "year"
+  ],
+  "categorical_features": {
+    "sex": [
+      "Female",
+      "Male"
+    ],
+    "island": [
+      "Biscoe",
+      "Dream",
+      "Torgersen"
+    ]
+  },
+  "ohe_feature_names": [
+    "bill_length_mm",
+    "bill_depth_mm",
+    "flipper_length_mm",
+    "body_mass_g",
+    "year",
+    "sex_Female",
+    "sex_Male",
+    "island_Biscoe",
+    "island_Dream",
+    "island_Torgersen"
+  ],
+  "label_mapping": {
+    "Adelie": 0,
+    "Chinstrap": 1,
+    "Gentoo": 2
+  },
+  "index_to_label": {
+    "0": "Adelie",
+    "1": "Chinstrap",
+    "2": "Gentoo"
+  }
+}
