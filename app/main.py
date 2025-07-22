@@ -1,5 +1,5 @@
-# app/main.py
 """
+app/main.py
 FastAPI service for penguin species prediction.
 Matches test expectations:
 - GET /  -> {"message": "Hello World"}
@@ -7,7 +7,6 @@ Matches test expectations:
 - 422 on Pydantic validation errors (missing/wrong types)
 - Accepts negative / huge numbers (no gt/lt validation)
 """
-
 from __future__ import annotations
 
 import json
